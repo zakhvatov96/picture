@@ -13,22 +13,30 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 const modals = state => {
-  function bindModal(triggerSelector, modalSelector, closeSelector, closeClickOverlay = true) {
+  let btnPressed = false;
+  function bindModal(triggerSelector, modalSelector, closeSelector, destroy = false) {
     const trigger = document.querySelectorAll(triggerSelector),
       modal = document.querySelector(modalSelector),
       close = document.querySelector(closeSelector),
       windows = document.querySelectorAll('[data-modal]'),
-      scroll = calcScroll();
+      scroll = calcScroll(),
+      giftTrigger = document.querySelector('.fixed-gift');
     trigger.forEach(item => {
       item.addEventListener('click', e => {
         if (e.target) {
           e.preventDefault();
+          if (destroy) {
+            item.remove();
+          }
+          btnPressed = true;
           windows.forEach(item => {
             item.style.display = 'none';
+            item.classList.add('animated', 'fadeIn');
           });
           modal.style.display = 'block';
           document.body.style.overflow = 'hidden';
           document.body.style.marginRight = `${scroll}px`;
+          giftTrigger.style.marginRight = `${scroll}px`;
         }
       });
     });
@@ -41,7 +49,7 @@ const modals = state => {
       document.body.style.marginRight = '0px';
     });
     modal.addEventListener('click', e => {
-      if (e.target === modal && closeClickOverlay) {
+      if (e.target === modal) {
         windows.forEach(item => {
           item.style.display = 'none';
         });
@@ -61,6 +69,7 @@ const modals = state => {
         }
       });
       if (!display) {
+        let scroll = calcScroll();
         modal.style.display = 'block';
         document.body.style.overflow = 'hidden';
         document.body.style.marginRight = `${scroll}px`;
@@ -78,9 +87,19 @@ const modals = state => {
     div.remove();
     return scrollWidth;
   }
+  function modalScroll(selector) {
+    window.addEventListener('scroll', () => {
+      const scrollHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+      if (!btnPressed && window.pageYOffset + document.documentElement.clientHeight >= scrollHeight) {
+        document.querySelector(selector).click();
+      }
+    });
+  }
   bindModal('.button-design', '.popup-design', '.popup-design .popup-close');
   bindModal('.button-consultation', '.popup-consultation', '.popup-consultation .popup-close');
+  bindModal('.fixed-gift', '.popup-gift', '.popup-gift .popup-close', true);
   showModalByTime('.popup-consultation', 60000);
+  modalScroll('.fixed-gift');
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (modals);
 
