@@ -1,4 +1,4 @@
-const modals = (state) => {
+const modals = () => {
 	let btnPressed = false;
 	function bindModal (triggerSelector, modalSelector, closeSelector, destroy = false) {
 		const trigger = document.querySelectorAll(triggerSelector),
