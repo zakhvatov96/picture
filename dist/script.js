@@ -2,6 +2,99 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/js/forms.js"
+/*!*************************!*\
+  !*** ./src/js/forms.js ***!
+  \*************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const forms = () => {
+  const form = document.querySelectorAll('form');
+  const inputs = document.querySelectorAll('input');
+  const upload = document.querySelectorAll('[name="upload"]');
+  const message = {
+    loading: 'Загрузка...',
+    success: 'Спасибо! Мы скоро с вами свяжемся!',
+    failure: 'Что-то пошло не так...',
+    spinner: 'assets/img/spinner.gif',
+    ok: 'assets/img/ok.png',
+    fail: 'assets/img/fail.png'
+  };
+  const path = {
+    designer: 'assets/server.php',
+    question: 'assets/question.php'
+  };
+  const postData = async (url, data) => {
+    let res = await fetch(url, {
+      method: 'POST',
+      body: data
+    });
+    return await res.text();
+  };
+  const clearInputs = () => {
+    inputs.forEach(item => {
+      item.value = '';
+    });
+    upload.forEach(item => {
+      item.previousElementSibling.textContent = 'Файл не выбран';
+    });
+  };
+  upload.forEach(item => {
+    item.addEventListener('input', () => {
+      let dots;
+      let arr = item.files[0].name.split('.');
+      arr[0].length > 6 ? dots = '...' : dots = '.';
+      item.previousElementSibling.textContent = arr[0].substring(0, 6) + dots + arr[1];
+    });
+  });
+  form.forEach(item => {
+    item.addEventListener('submit', e => {
+      e.preventDefault();
+      const statusMessage = document.createElement('div');
+      statusMessage.classList.add('status');
+      item.parentNode.appendChild(statusMessage);
+      item.classList.add('animated', 'fadeOutUp');
+      setTimeout(() => {
+        item.style.display = 'none';
+      }, 100);
+      let statusImg = document.createElement('img');
+      statusImg.setAttribute('src', message.spinner);
+      statusImg.classList.add('animated', 'fadeInUp');
+      statusMessage.appendChild(statusImg);
+      let textMessage = document.createElement('div');
+      textMessage.textContent = message.loading;
+      statusMessage.appendChild(textMessage);
+      const formData = new FormData(item);
+      let api;
+      item.closest('.popup-design') || item.classList.contains('calc-form') ? api = path.designer : api = path.question;
+      console.log(api);
+      postData(api, formData).then(res => {
+        console.log(res);
+        statusImg.setAttribute('src', message.ok);
+        textMessage.textContent = message.success;
+      }).catch(res => {
+        statusImg.setAttribute('src', message.fail);
+        statusMessage.textContent = message.failure;
+      }).finally(res => {
+        clearInputs();
+        setTimeout(() => {
+          statusMessage.remove();
+          item.style.display = 'block';
+          item.classList.remove('fadeOutUp');
+          item.classList.add('fadeInUp');
+        }, 5000);
+      });
+    });
+  });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (forms);
+
+/***/ },
+
 /***/ "./src/js/modals.js"
 /*!**************************!*\
   !*** ./src/js/modals.js ***!
@@ -247,6 +340,8 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modals__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modals */ "./src/js/modals.js");
 /* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slider */ "./src/js/slider.js");
+/* harmony import */ var _forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./forms */ "./src/js/forms.js");
+
 
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -255,6 +350,7 @@ window.addEventListener('DOMContentLoaded', () => {
   (0,_modals__WEBPACK_IMPORTED_MODULE_0__["default"])();
   (0,_slider__WEBPACK_IMPORTED_MODULE_1__["default"])('.feedback-slider-item', 'horizontal', '.main-prev-btn', '.main-next-btn');
   (0,_slider__WEBPACK_IMPORTED_MODULE_1__["default"])('.main-slider-item', 'vertical');
+  (0,_forms__WEBPACK_IMPORTED_MODULE_2__["default"])();
 });
 })();
 
