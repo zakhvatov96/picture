@@ -1,9 +1,11 @@
 import { postData } from "../services/requests";
 
-const forms = () => {
+const forms = (state) => {
 	const form = document.querySelectorAll('form');
 	const inputs = document.querySelectorAll('input');
 	const upload = document.querySelectorAll('[name="upload"]');
+	const select = document.querySelectorAll('select');
+	const calcPrice = document.querySelector('.calc-price');
 
 
 	const message = {
@@ -28,6 +30,18 @@ const forms = () => {
 		upload.forEach(item => {
 			item.previousElementSibling.textContent = 'Файл не выбран';
 		})
+
+		select.forEach(item => {
+			item.value = '';
+		})
+		
+		calcPrice.textContent = 'Для расчета нужно выбрать размер картины и материал картины';
+	}
+
+	const clearState = () => {
+	for(let prop of Object.keys(state)) {
+		delete state[prop];
+	}
 	}
 
 	upload.forEach(item => {
@@ -63,6 +77,9 @@ const forms = () => {
 
 
 			const formData = new FormData(item);
+			for(let key in state) {
+				formData.append(key, state[key]);
+			}
 			let api;
 			item.closest('.popup-design') || item.classList.contains('calc-form') ? api = path.designer : api = path.question;
 			console.log(api)
@@ -81,6 +98,7 @@ const forms = () => {
 			})
 			.finally(res => {
 				clearInputs();
+				clearState();
 				setTimeout(() => {
 					statusMessage.remove();
 					item.style.display = 'block';

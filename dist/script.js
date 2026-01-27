@@ -2,6 +2,45 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/js/modules/calc.js"
+/*!********************************!*\
+  !*** ./src/js/modules/calc.js ***!
+  \********************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const calc = (state, size, material, options, promocode, result) => {
+  const sizeBlock = document.querySelector(size),
+    materialBlock = document.querySelector(material),
+    optionsBlock = document.querySelector(options),
+    promocodeBlock = document.querySelector(promocode),
+    resultBlock = document.querySelector(result);
+  let sum = 0;
+  function calcSum(e, prop) {
+    sum = Math.round(+sizeBlock.value * +materialBlock.value + +optionsBlock.value);
+    if (sizeBlock.value === '' || materialBlock.value === '') {
+      resultBlock.textContent = 'Выберите размер и материал картины';
+    } else if (promocodeBlock.value === 'IWANTPOPART') {
+      resultBlock.textContent = sum * 0.7;
+    } else {
+      resultBlock.textContent = sum;
+    }
+    state[prop] = e.target.value;
+    state['result'] = resultBlock.textContent;
+    console.log(state);
+  }
+  sizeBlock.addEventListener('change', e => calcSum(e, 'size'));
+  materialBlock.addEventListener('change', e => calcSum(e, 'material'));
+  optionsBlock.addEventListener('change', e => calcSum(e, 'options'));
+  promocodeBlock.addEventListener('input', e => calcSum(e, 'promocode'));
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (calc);
+
+/***/ },
+
 /***/ "./src/js/modules/checkTextInputs.js"
 /*!*******************************************!*\
   !*** ./src/js/modules/checkTextInputs.js ***!
@@ -44,10 +83,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _services_requests__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/requests */ "./src/js/services/requests.js");
 
-const forms = () => {
+const forms = state => {
   const form = document.querySelectorAll('form');
   const inputs = document.querySelectorAll('input');
   const upload = document.querySelectorAll('[name="upload"]');
+  const select = document.querySelectorAll('select');
+  const calcPrice = document.querySelector('.calc-price');
   const message = {
     loading: 'Загрузка...',
     success: 'Спасибо! Мы скоро с вами свяжемся!',
@@ -67,6 +108,15 @@ const forms = () => {
     upload.forEach(item => {
       item.previousElementSibling.textContent = 'Файл не выбран';
     });
+    select.forEach(item => {
+      item.value = '';
+    });
+    calcPrice.textContent = 'Для расчета нужно выбрать размер картины и материал картины';
+  };
+  const clearState = () => {
+    for (let prop of Object.keys(state)) {
+      delete state[prop];
+    }
   };
   upload.forEach(item => {
     item.addEventListener('input', () => {
@@ -94,6 +144,9 @@ const forms = () => {
       textMessage.textContent = message.loading;
       statusMessage.appendChild(textMessage);
       const formData = new FormData(item);
+      for (let key in state) {
+        formData.append(key, state[key]);
+      }
       let api;
       item.closest('.popup-design') || item.classList.contains('calc-form') ? api = path.designer : api = path.question;
       console.log(api);
@@ -106,6 +159,7 @@ const forms = () => {
         statusMessage.textContent = message.failure;
       }).finally(res => {
         clearInputs();
+        clearState();
         setTimeout(() => {
           statusMessage.remove();
           item.style.display = 'block';
@@ -513,6 +567,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_mask__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/mask */ "./src/js/modules/mask.js");
 /* harmony import */ var _modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/checkTextInputs */ "./src/js/modules/checkTextInputs.js");
 /* harmony import */ var _modules_showMoreStyles__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/showMoreStyles */ "./src/js/modules/showMoreStyles.js");
+/* harmony import */ var _modules_calc__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/calc */ "./src/js/modules/calc.js");
+
 
 
 
@@ -522,14 +578,16 @@ __webpack_require__.r(__webpack_exports__);
 window.addEventListener('DOMContentLoaded', () => {
   'use strict';
 
+  const modalState = {};
   (0,_modules_modals__WEBPACK_IMPORTED_MODULE_0__["default"])();
   (0,_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])('.feedback-slider-item', 'horizontal', '.main-prev-btn', '.main-next-btn');
   (0,_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])('.main-slider-item', 'vertical');
-  (0,_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])();
+  (0,_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])(modalState);
   (0,_modules_mask__WEBPACK_IMPORTED_MODULE_3__["default"])('[name="phone"]');
   (0,_modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__["default"])('[name="name"]');
   (0,_modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__["default"])('[name="message"]');
   (0,_modules_showMoreStyles__WEBPACK_IMPORTED_MODULE_5__["default"])('.button-styles', '#styles .row');
+  (0,_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])(modalState, '#size', '#material', '#options', '.promocode', '.calc-price');
 });
 })();
 
