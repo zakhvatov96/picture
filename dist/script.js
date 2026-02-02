@@ -71,6 +71,67 @@ const checkTextInputs = selector => {
 
 /***/ },
 
+/***/ "./src/js/modules/filter.js"
+/*!**********************************!*\
+  !*** ./src/js/modules/filter.js ***!
+  \**********************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const filter = () => {
+  const menu = document.querySelector('.portfolio-menu'),
+    items = menu.querySelectorAll('li'),
+    wrapper = document.querySelector('.portfolio-wrapper');
+  const typeFilter = markType => {
+    const markAll = wrapper.querySelectorAll('.all'),
+      no = document.querySelector('.portfolio-no');
+    markAll.forEach(item => {
+      item.style.display = 'none';
+      item.classList.remove('animated', 'fadeIn');
+    });
+    no.style.display = 'none';
+    no.classList.remove('animated', 'fadeIn');
+    if (markType) {
+      markType.forEach(item => {
+        item.style.display = 'block';
+        item.classList.add('animated', 'fadeIn');
+      });
+    } else {
+      no.style.display = 'block';
+      no.classList.add('animated', 'fadeIn');
+    }
+  };
+  const addListeners = (btnSelector, contentSelector) => {
+    const btn = menu.querySelector(btnSelector),
+      content = wrapper.querySelectorAll(contentSelector);
+    btn.addEventListener('click', () => {
+      contentSelector ? typeFilter(content) : typeFilter();
+    });
+  };
+  addListeners('.all', '.all');
+  addListeners('.lovers', '.lovers');
+  addListeners('.chef', '.chef');
+  addListeners('.girl', '.girl');
+  addListeners('.guy', '.guy');
+  addListeners('.grandmother');
+  addListeners('.granddad');
+  menu.addEventListener('click', e => {
+    const target = e.target;
+    if (target && target.tagName === 'LI') {
+      items.forEach(item => {
+        item.classList.remove('active');
+      });
+      target.classList.add('active');
+    }
+  });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (filter);
+
+/***/ },
+
 /***/ "./src/js/modules/forms.js"
 /*!*********************************!*\
   !*** ./src/js/modules/forms.js ***!
@@ -568,6 +629,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/checkTextInputs */ "./src/js/modules/checkTextInputs.js");
 /* harmony import */ var _modules_showMoreStyles__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/showMoreStyles */ "./src/js/modules/showMoreStyles.js");
 /* harmony import */ var _modules_calc__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/calc */ "./src/js/modules/calc.js");
+/* harmony import */ var _modules_filter__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/filter */ "./src/js/modules/filter.js");
+
 
 
 
@@ -588,6 +651,7 @@ window.addEventListener('DOMContentLoaded', () => {
   (0,_modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__["default"])('[name="message"]');
   (0,_modules_showMoreStyles__WEBPACK_IMPORTED_MODULE_5__["default"])('.button-styles', '#styles .row');
   (0,_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])(modalState, '#size', '#material', '#options', '.promocode', '.calc-price');
+  (0,_modules_filter__WEBPACK_IMPORTED_MODULE_7__["default"])();
 });
 })();
 
