@@ -1,7 +1,7 @@
 const filter = () => {
 	const menu = document.querySelector('.portfolio-menu'),
 		  items = menu.querySelectorAll('li'),
-		  wrapper = document.querySelector('.portfolio-wrapper')
+		  wrapper = document.querySelector('.portfolio-wrapper');
 
 
 	const typeFilter = (markType) => {
